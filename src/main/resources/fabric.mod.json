@@ -1,0 +1,31 @@
+{
+	"schemaVersion": 1,
+	"id": "wandering_collector",
+	"version": "${version}",
+	"name": "Wandering Collector",
+	"description": "Wandering Traders trade lost items back to the player",
+	"authors": [
+		"Siphalor"
+	],
+	"contributors": [],
+	"contact": {},
+	"license": "Apache-2.0",
+	"icon": "assets/wandering_collector/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"de.siphalor.wanderingcollector.WanderingCollector"
+		],
+		"client": [],
+		"server": [],
+		"tweed:config": [
+			"de.siphalor.wanderingcollector.WCConfig"
+		]
+	},
+	"mixins": [
+		"wandering_collector.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.4.0"
+	}
+}
