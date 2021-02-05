@@ -1,13 +1,16 @@
 plugins {
 	id 'fabric-loom' version '0.6-SNAPSHOT'
 	id 'maven-publish'
+	id 'com.matthewprenger.cursegradle' version '1.4.0'
+	id 'com.modrinth.minotaur' version '1.1.0'
+	id 'org.cadixdev.licenser' version '0.5.0'
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 archivesBaseName = project.archives_base_name
-version = project.mod_version
+version = project.mod_version + "+mc" + project.minecraft_version
 group = project.maven_group
 
 minecraft {
@@ -29,6 +32,12 @@ dependencies {
 		exclude module: "config-2"
 		exclude module: "modmenu"
 	}
+}
+
+license {
+	header = project.file('LICENSE_HEADER')
+
+	include '**/*.java'
 }
 
 processResources {
