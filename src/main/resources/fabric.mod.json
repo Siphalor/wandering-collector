@@ -8,7 +8,11 @@
 		"Siphalor"
 	],
 	"contributors": [],
-	"contact": {},
+	"contact": {
+		"sources": "https://github.com/Siphalor/wandering-collector",
+		"issues": "https://github.com/Siphalor/wandering-collector/issues",
+		"homepage": "https://modrinth.com/mod/wandering-collector"
+	},
 	"license": "Apache-2.0",
 	"icon": "assets/wandering_collector/icon.png",
 	"environment": "*",
