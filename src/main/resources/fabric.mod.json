@@ -3,7 +3,7 @@
 	"id": "wandering_collector",
 	"version": "${version}",
 	"name": "Wandering Collector",
-	"description": "Wandering Traders trade lost items back to the player",
+	"description": "Wandering Traders trade lost items back to the player.\nThe initial idea for this feature was suggested by SimplySarc in one of his videos.",
 	"authors": [
 		"Siphalor"
 	],
