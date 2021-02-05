@@ -9,4 +9,4 @@ This Minecraft mod takes the Wandering Trader idea from [one of SimplySarc's sug
 
 Whenever a player dropped item despawns/gets destroyed, the stacks get internally added to a list and have a chance to show up next time when trading with a Wandering Trader.
 
-Of course, you can legitimately trade your items back only one ;)
+Of course, you can legitimately trade your items back only once ;)
