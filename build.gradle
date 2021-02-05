@@ -17,7 +17,8 @@ minecraft {
 }
 
 repositories {
-	mavenCentral()
+	jcenter()
+	maven { url "https://maven.terraformersmc.com/releases" }
 	maven { url "https://maven.siphalor.de" }
 }
 
@@ -27,10 +28,21 @@ dependencies {
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	modCompileOnly("de.siphalor:tweed-1.17:3.0.0-beta.22+") {
+	modImplementation("me.shedaniel.cloth:config-2:5.0.0") {
+		exclude group: "net.fabricmc.fabric-api"
+		exclude module: "modmenu"
+	}
+	include "me.shedaniel.cloth:config-2:5.0.0"
+
+	include "de.siphalor:tweed-1.17:3.0.0-beta.22+"
+	modImplementation("de.siphalor:tweed-1.17:3.0.0-beta.22+") {
 		exclude module: "basic-math"
 		exclude module: "config-2"
 		exclude module: "modmenu"
+	}
+
+	modRuntime("io.github.prospector:modmenu:2.0.0+") {
+		exclude group: "net.fabricmc.fabric-api"
 	}
 }
 
