@@ -27,7 +27,7 @@ dependencies {
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	modImplementation("de.siphalor:tweed-1.16:3.0.0-beta.22+") {
+	modCompileOnly("de.siphalor:tweed-1.17:3.0.0-beta.22+") {
 		exclude module: "basic-math"
 		exclude module: "config-2"
 		exclude module: "modmenu"
@@ -135,9 +135,10 @@ if (project.hasProperty("siphalorCurseForgeApi")) {
 			releaseType = project.mod_release
 			changelogType = "markdown"
 			changelog = changes
-			for (version in ((String) project.mod_mc_versions).split(";")) {
-				addGameVersion(version)
-			}
+			//for (version in ((String) project.mod_mc_versions).split(";")) {
+			//	addGameVersion(version)
+			//}
+			addGameVersion("1.17-Snapshot")
 			relations {
 				embeddedLibrary "fabric-api"
 				embeddedLibrary "amecs"

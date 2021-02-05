@@ -47,7 +47,7 @@ public abstract class MixinItemEntity extends Entity {
 
 	@Inject(
 			method = "tick",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/ItemEntity;remove()V", ordinal = 1)
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/ItemEntity;discard()V", ordinal = 1)
 	)
 	public void tickInject(CallbackInfo callbackInfo) {
 		addStackToThrower();
@@ -55,7 +55,7 @@ public abstract class MixinItemEntity extends Entity {
 
 	@Inject(
 			method = "damage",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/ItemEntity;remove()V")
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/ItemEntity;discard()V")
 	)
 	public void onDeathInject(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
 		addStackToThrower();
