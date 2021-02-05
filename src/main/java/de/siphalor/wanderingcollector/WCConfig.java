@@ -27,13 +27,25 @@ import de.siphalor.tweed.config.constraints.RangeConstraint;
 
 @ATweedConfig(file = WanderingCollector.MOD_ID, scope = ConfigScope.SMALLEST, environment = ConfigEnvironment.UNIVERSAL, casing = CaseFormat.LOWER_HYPHEN, tailors = "tweed:cloth")
 public class WCConfig {
-	@AConfigEntry(constraints = @AConfigConstraint(value = RangeConstraint.class, param = "0.."))
+	@AConfigEntry(
+			constraints = @AConfigConstraint(value = RangeConstraint.class, param = "0.."),
+			comment = "The maximum number of items that get remembered after loosing them"
+	)
 	public static int maxLostStackAmount = 64;
-	@AConfigEntry(constraints = @AConfigConstraint(value = RangeConstraint.class, param = "0.."))
+	@AConfigEntry(
+			constraints = @AConfigConstraint(value = RangeConstraint.class, param = "0.."),
+			comment = "The number of buy-back trades Wandering Traders will offer"
+	)
 	public static int buyBackTrades = 2;
 
-	@AConfigEntry(constraints = @AConfigConstraint(value = RangeConstraint.class, param = "1..64"))
+	@AConfigEntry(
+			constraints = @AConfigConstraint(value = RangeConstraint.class, param = "1..64"),
+			comment = "The minimum emerald price to buy back items"
+	)
 	public static int minEmeraldsTrade = 16;
-	@AConfigEntry(constraints = @AConfigConstraint(value = RangeConstraint.class, param = "1..64"))
+	@AConfigEntry(
+			constraints = @AConfigConstraint(value = RangeConstraint.class, param = "1..64"),
+			comment = "The maximum emerald price to buy back items"
+	)
 	public static int maxEmeraldsTrade = 64;
 }
