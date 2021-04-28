@@ -27,9 +27,9 @@ import net.minecraft.entity.passive.WanderingTraderEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.screen.MerchantScreenHandler;
 import net.minecraft.screen.SimpleNamedScreenHandlerFactory;
 import net.minecraft.text.Text;
@@ -60,7 +60,7 @@ public abstract class MixinWanderingTraderEntity extends MerchantEntity implemen
 		tradeOfferList.addAll(getOffers());
 		Collection<TradeOffer> offers = playerSpecificTrades.get(playerEntity.getUuid());
 		if (offers == null) {
-			ArrayList<CompoundTag> stackCompounds = ((IServerPlayerEntity) playerEntity).wandering_collector$getLostStackCompounds();
+			ArrayList<NbtCompound> stackCompounds = ((IServerPlayerEntity) playerEntity).wandering_collector$getLostStackCompounds();
 			if (stackCompounds.isEmpty() || WCConfig.buyBackTrades <= 0) {
 				offers = Collections.emptyList();
 			} else {
@@ -68,7 +68,7 @@ public abstract class MixinWanderingTraderEntity extends MerchantEntity implemen
 				for (int j = 0; j < Math.min(WCConfig.buyBackTrades, stackCompounds.size()); j++) {
 					offers.add(new TradeOffer(
 									new ItemStack(Items.EMERALD, Utils.randInclusive(random, WCConfig.minEmeraldsTrade, WCConfig.maxEmeraldsTrade)),
-									ItemStack.fromTag(stackCompounds.remove(j)),
+									ItemStack.fromNbt(stackCompounds.remove(j)),
 									1, 0, 1F
 							)
 					);
@@ -93,17 +93,17 @@ public abstract class MixinWanderingTraderEntity extends MerchantEntity implemen
 		}
 	}
 
-	@Inject(method = "readCustomDataFromTag", at = @At("RETURN"))
-	public void readCustomDataFromTagInject(CompoundTag tag, CallbackInfo callbackInfo) {
+	@Inject(method = "readCustomDataFromNbt", at = @At("RETURN"))
+	public void readCustomDataFromTagInject(NbtCompound tag, CallbackInfo callbackInfo) {
 		playerSpecificTrades.clear();
 		if (tag.contains(WanderingCollector.PLAYER_SPECIFIC_TRADES, 10)) {
-			CompoundTag compound = tag.getCompound(WanderingCollector.PLAYER_SPECIFIC_TRADES);
+			NbtCompound compound = tag.getCompound(WanderingCollector.PLAYER_SPECIFIC_TRADES);
 			for (String key : compound.getKeys()) {
 				if (compound.contains(key, 9)) {
-					ListTag list = compound.getList(key, 10);
+					NbtList list = compound.getList(key, 10);
 					ArrayList<TradeOffer> offers = new ArrayList<>(list.size());
-					for (Tag tradeTag : list) {
-						offers.add(new TradeOffer((CompoundTag) tradeTag));
+					for (NbtElement tradeTag : list) {
+						offers.add(new TradeOffer((NbtCompound) tradeTag));
 					}
 					playerSpecificTrades.put(UUID.fromString(key), offers);
 				}
@@ -111,16 +111,16 @@ public abstract class MixinWanderingTraderEntity extends MerchantEntity implemen
 		}
 	}
 
-	@Inject(method = "writeCustomDataToTag", at = @At("RETURN"))
-	public void writeCustomDataToTag(CompoundTag tag, CallbackInfo callbackInfo) {
-		CompoundTag compound = new CompoundTag();
+	@Inject(method = "writeCustomDataToNbt", at = @At("RETURN"))
+	public void writeCustomDataToTag(NbtCompound tag, CallbackInfo callbackInfo) {
+		NbtCompound compound = new NbtCompound();
 		for (Map.Entry<UUID, Collection<TradeOffer>> entry : playerSpecificTrades.entrySet()) {
 			if (entry.getValue().isEmpty()) {
 				continue;
 			}
-			ListTag list = new ListTag();
+			NbtList list = new NbtList();
 			for (TradeOffer tradeOffer : entry.getValue()) {
-				list.add(tradeOffer.toTag());
+				list.add(tradeOffer.toNbt());
 			}
 			compound.put(entry.getKey().toString(), list);
 		}

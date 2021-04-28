@@ -23,8 +23,8 @@ import de.siphalor.wanderingcollector.WCConfig;
 import de.siphalor.wanderingcollector.WanderingCollector;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -40,7 +40,7 @@ import java.util.Collection;
 @Mixin(ServerPlayerEntity.class)
 public abstract class MixinServerPlayerEntity extends PlayerEntity implements IServerPlayerEntity {
 	@Unique
-	private ArrayList<CompoundTag> lostStacks = new ArrayList<>();
+	private ArrayList<NbtCompound> lostStacks = new ArrayList<>();
 
 	public MixinServerPlayerEntity(World world, BlockPos pos, float yaw, GameProfile profile) {
 		super(world, pos, yaw, profile);
@@ -51,31 +51,31 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements IS
 		lostStacks = ((IServerPlayerEntity) other).wandering_collector$getLostStackCompounds();
 	}
 
-	@Inject(method = "readCustomDataFromTag", at = @At("RETURN"))
-	public void readCustomDataFromTagInject(CompoundTag tag, CallbackInfo callbackInfo) {
+	@Inject(method = "readCustomDataFromNbt", at = @At("RETURN"))
+	public void readCustomDataFromTagInject(NbtCompound tag, CallbackInfo callbackInfo) {
 		lostStacks.clear();
 		if (tag.contains(WanderingCollector.LOST_STACKS_KEY, 9)) {
-			ListTag lostStacksTag = tag.getList(WanderingCollector.LOST_STACKS_KEY, 10);
+			NbtList lostStacksTag = tag.getList(WanderingCollector.LOST_STACKS_KEY, 10);
 			//noinspection unchecked
-			lostStacks.addAll((Collection<? extends CompoundTag>) (Object) lostStacksTag.copy());
+			lostStacks.addAll((Collection<? extends NbtCompound>) (Object) lostStacksTag.copy());
 		}
 	}
 
-	@Inject(method = "writeCustomDataToTag", at = @At("RETURN"))
-	public void writeCustomDataToTagInject(CompoundTag tag, CallbackInfo callbackInfo) {
-		ListTag lostStacksTag = new ListTag();
+	@Inject(method = "writeCustomDataToNbt", at = @At("RETURN"))
+	public void writeCustomDataToTagInject(NbtCompound tag, CallbackInfo callbackInfo) {
+		NbtList lostStacksTag = new NbtList();
 		lostStacksTag.addAll(lostStacks);
 		tag.put(WanderingCollector.LOST_STACKS_KEY, lostStacksTag);
 	}
 
 	@Override
-	public ArrayList<CompoundTag> wandering_collector$getLostStackCompounds() {
+	public ArrayList<NbtCompound> wandering_collector$getLostStackCompounds() {
 		return lostStacks;
 	}
 
 	@Override
 	public void wandering_collector$addLostStack(ItemStack stack) {
-		CompoundTag compoundTag = stack.toTag(new CompoundTag());
+		NbtCompound compoundTag = stack.writeNbt(new NbtCompound());
 		if (lostStacks.size() < WCConfig.maxLostStackAmount) {
 			lostStacks.add(compoundTag);
 		} else {

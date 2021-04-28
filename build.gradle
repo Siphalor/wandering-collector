@@ -44,6 +44,8 @@ dependencies {
 	modRuntime("io.github.prospector:modmenu:2.0.0+") {
 		exclude group: "net.fabricmc.fabric-api"
 	}
+
+	modImplementation("net.fabricmc.fabric-api:fabric-resource-loader-v0:0.4.6+12865e78d1")
 }
 
 license {

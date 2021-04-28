@@ -38,7 +38,7 @@ public class MixinMerchantInventory implements IMerchantInventory {
 		this.player = player;
 	}
 
-	@Redirect(method = "updateRecipes", at = @At(value = "INVOKE", target = "Lnet/minecraft/village/Merchant;getOffers()Lnet/minecraft/village/TradeOfferList;"))
+	@Redirect(method = "updateOffers", at = @At(value = "INVOKE", target = "Lnet/minecraft/village/Merchant;getOffers()Lnet/minecraft/village/TradeOfferList;"))
 	public TradeOfferList getOffersRedirect(Merchant merchant) {
 		if (merchant instanceof IWanderingTraderEntity) {
 			return ((IWanderingTraderEntity) merchant).wandering_collector$getOffers(player);
