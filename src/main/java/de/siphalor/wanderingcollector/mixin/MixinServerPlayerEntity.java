@@ -18,9 +18,11 @@
 package de.siphalor.wanderingcollector.mixin;
 
 import com.mojang.authlib.GameProfile;
+import de.siphalor.wanderingcollector.util.IItemEntity;
 import de.siphalor.wanderingcollector.util.IServerPlayerEntity;
 import de.siphalor.wanderingcollector.WCConfig;
 import de.siphalor.wanderingcollector.WanderingCollector;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -33,6 +35,8 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,6 +50,17 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements IS
 		super(world, pos, yaw, profile);
 	}
 
+	@Inject(
+			method = "dropItem",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"),
+			locals = LocalCapture.CAPTURE_FAILHARD
+	)
+	public void onItemDropped(ItemStack itemStack, boolean thrownRandomly, boolean retainOwnership, CallbackInfoReturnable<ItemStack> cir, ItemEntity itemEntity) {
+		if (!retainOwnership) {
+			((IItemEntity) itemEntity).wanderingCollector$setFormerOwner(getUuid());
+		}
+	}
+
 	@Inject(method = "copyFrom", at = @At("RETURN"))
 	public void copyFromInject(ServerPlayerEntity other, boolean alive, CallbackInfo callbackInfo) {
 		lostStacks = ((IServerPlayerEntity) other).wandering_collector$getLostStackCompounds();
@@ -56,8 +71,8 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements IS
 		lostStacks.clear();
 		if (tag.contains(WanderingCollector.LOST_STACKS_KEY, 9)) {
 			NbtList lostStacksTag = tag.getList(WanderingCollector.LOST_STACKS_KEY, 10);
-			//noinspection unchecked
-			lostStacks.addAll((Collection<? extends NbtCompound>) (Object) lostStacksTag.copy());
+			//noinspection unchecked,RedundantCast
+			lostStacks.addAll((Collection<? extends NbtCompound>)(Object) lostStacksTag.copy());
 		}
 	}
 

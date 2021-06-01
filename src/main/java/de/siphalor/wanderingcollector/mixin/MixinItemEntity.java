@@ -17,6 +17,8 @@
 
 package de.siphalor.wanderingcollector.mixin;
 
+import de.siphalor.wanderingcollector.WanderingCollector;
+import de.siphalor.wanderingcollector.util.IItemEntity;
 import de.siphalor.wanderingcollector.util.IServerPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -24,6 +26,7 @@ import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -36,7 +39,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.UUID;
 
 @Mixin(ItemEntity.class)
-public abstract class MixinItemEntity extends Entity {
+public abstract class MixinItemEntity extends Entity implements IItemEntity {
+	@Unique
+	private static final String formerOwnerKey = WanderingCollector.MOD_ID + ":FormerOwner";
+
+	@Unique
+	private UUID formerOwner;
+
 	public MixinItemEntity(EntityType<?> type, World world) {
 		super(type, world);
 	}
@@ -44,6 +53,30 @@ public abstract class MixinItemEntity extends Entity {
 	@Shadow public abstract ItemStack getStack();
 
 	@Shadow private UUID thrower;
+
+	@Override
+	public UUID wanderingCollector$getFormerOwner() {
+		return formerOwner;
+	}
+
+	@Override
+	public void wanderingCollector$setFormerOwner(UUID playerUuid) {
+		this.formerOwner = playerUuid;
+	}
+
+	@Inject(method = "readCustomDataFromNbt", at = @At("RETURN"))
+	public void readCustomDataFromTag(NbtCompound tag, CallbackInfo ci) {
+		if (tag.containsUuid(formerOwnerKey)) {
+			formerOwner = tag.getUuid(formerOwnerKey);
+		}
+	}
+
+	@Inject(method = "writeCustomDataToNbt", at = @At("RETURN"))
+	public void writeCustomDataFromTag(NbtCompound tag, CallbackInfo ci) {
+		if (formerOwner != null) {
+			tag.putUuid(formerOwnerKey, formerOwner);
+		}
+	}
 
 	@Inject(
 			method = "tick",
@@ -63,8 +96,12 @@ public abstract class MixinItemEntity extends Entity {
 
 	@Unique
 	private void addStackToThrower() {
-		if (thrower != null) {
-			PlayerEntity player = world.getPlayerByUuid(thrower);
+		UUID theFormerOwner = thrower;
+		if (theFormerOwner == null) {
+			theFormerOwner = formerOwner;
+		}
+		if (theFormerOwner != null) {
+			PlayerEntity player = world.getPlayerByUuid(theFormerOwner);
 			if (player instanceof IServerPlayerEntity) {
 				((IServerPlayerEntity) player).wandering_collector$addLostStack(getStack());
 			}
