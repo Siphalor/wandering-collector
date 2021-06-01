@@ -71,8 +71,8 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements IS
 		lostStacks.clear();
 		if (tag.contains(WanderingCollector.LOST_STACKS_KEY, 9)) {
 			ListTag lostStacksTag = tag.getList(WanderingCollector.LOST_STACKS_KEY, 10);
-			//noinspection unchecked
-			lostStacks.addAll((Collection<? extends CompoundTag>) lostStacksTag.copy());
+			//noinspection unchecked,RedundantCast
+			lostStacks.addAll((Collection<? extends CompoundTag>)(Object) lostStacksTag.copy());
 		}
 	}
 
