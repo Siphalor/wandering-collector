@@ -1,7 +1,7 @@
 {
-	"tweed.cloth.wandering_collector": "Wandering Collector Config",
-	"tweed.cloth.wandering_collector.main.max-lost-stack-amount": "Amount of items to remember",
-	"tweed.cloth.wandering_collector.main.buy-back-trades": "Number of trades",
-	"tweed.cloth.wandering_collector.main.min-emeralds-trade": "Minimum price",
-	"tweed.cloth.wandering_collector.main.max-emeralds-trade": "Maximum price"
+	"tweed4_tailor_screen.screen.wandering_collector": "Wandering Collector Config",
+	"tweed4_tailor_screen.screen.wandering_collector.max-lost-stack-amount": "Amount of items to remember",
+	"tweed4_tailor_screen.screen.wandering_collector.buy-back-trades": "Number of trades",
+	"tweed4_tailor_screen.screen.wandering_collector.min-emeralds-trade": "Minimum price",
+	"tweed4_tailor_screen.screen.wandering_collector.max-emeralds-trade": "Maximum price"
 }
