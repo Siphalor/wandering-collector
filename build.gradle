@@ -17,9 +17,8 @@ minecraft {
 }
 
 repositories {
-	maven { url "https://maven.terraformersmc.com/releases" }
 	maven { url "https://maven.siphalor.de" }
-	maven { url "https://maven.shedaniel.me" }
+	maven { url "https://maven.terraformersmc.com/releases" }
 }
 
 dependencies {
@@ -28,20 +27,21 @@ dependencies {
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	include(modImplementation("me.shedaniel.cloth:cloth-config-fabric:5.0.34") {
+	include(modImplementation("net.fabricmc.fabric-api:fabric-api-base:0.3.0+a02b446318"))
+	include(modImplementation("net.fabricmc.fabric-api:fabric-networking-api-v1:1.0.13+cbda931818"))
+
+	include(modImplementation("de.siphalor.tweed4:tweed4-base-$minecraft_major_version:1.3.1+"))
+	include(modImplementation("de.siphalor.tweed4:tweed4-annotated-$minecraft_major_version:1.2.0+"))
+	include(modImplementation("de.siphalor.tweed4:tweed4-data-$minecraft_major_version:1.2.0+"))
+	include(modImplementation("de.siphalor.tweed4:tweed4-data-hjson-$minecraft_major_version:1.1.0+"))
+	include(modImplementation("de.siphalor.tweed4:tweed4-tailor-screen-$minecraft_major_version:1.0.1+"))
+	include(modImplementation("de.siphalor.tweed4:tweed4-tailor-coat-$minecraft_major_version:1.0.1+"))
+	include(modImplementation("de.siphalor:coat-$minecraft_major_version:1.0.0-beta.12"))
+
+	modRuntime("com.terraformersmc:modmenu:2+") {
 		exclude group: "net.fabricmc.fabric-api"
-		exclude module: "modmenu"
-	})
-
-	include(modImplementation("de.siphalor:tweed-1.17:3.0.0-beta.22+") {
-		exclude module: "basic-math"
-		exclude module: "config-2"
-		exclude module: "modmenu"
-	})
-
-	include(modRuntime("com.terraformersmc:modmenu:2.0.0-beta.7"))
-
-	modImplementation("net.fabricmc.fabric-api:fabric-resource-loader-v0:0.4.7+b7ab61213d")
+	}
+	modRuntime("net.fabricmc.fabric-api:fabric-api:0.40.8+1.17")
 }
 
 license {
@@ -143,14 +143,13 @@ if (project.hasProperty("siphalorCurseForgeApi")) {
 			releaseType = project.mod_release
 			changelogType = "markdown"
 			changelog = getChangelog()
-			addGameVersion("Fabric")
 			for (version in ((String) project.mod_mc_versions).split(";")) {
 				addGameVersion(version)
 			}
+			addGameVersion("Fabric")
 			relations {
 				embeddedLibrary "fabric-api"
 				embeddedLibrary "amecs"
-				embeddedLibrary "cloth-config"
 				embeddedLibrary "tweed-api"
 				optionalDependency "modmenu"
 			}

@@ -18,14 +18,14 @@
 package de.siphalor.wanderingcollector;
 
 import com.google.common.base.CaseFormat;
-import de.siphalor.tweed.config.ConfigEnvironment;
-import de.siphalor.tweed.config.ConfigScope;
-import de.siphalor.tweed.config.annotated.AConfigConstraint;
-import de.siphalor.tweed.config.annotated.AConfigEntry;
-import de.siphalor.tweed.config.annotated.ATweedConfig;
-import de.siphalor.tweed.config.constraints.RangeConstraint;
+import de.siphalor.tweed4.annotated.AConfigConstraint;
+import de.siphalor.tweed4.annotated.AConfigEntry;
+import de.siphalor.tweed4.annotated.ATweedConfig;
+import de.siphalor.tweed4.config.ConfigEnvironment;
+import de.siphalor.tweed4.config.ConfigScope;
+import de.siphalor.tweed4.config.constraints.RangeConstraint;
 
-@ATweedConfig(file = WanderingCollector.MOD_ID, scope = ConfigScope.SMALLEST, environment = ConfigEnvironment.UNIVERSAL, casing = CaseFormat.LOWER_HYPHEN, tailors = "tweed:cloth")
+@ATweedConfig(file = WanderingCollector.MOD_ID, scope = ConfigScope.SMALLEST, environment = ConfigEnvironment.UNIVERSAL, casing = CaseFormat.LOWER_HYPHEN, tailors = "tweed4:coat")
 public class WCConfig {
 	@AConfigEntry(
 			constraints = @AConfigConstraint(value = RangeConstraint.class, param = "0.."),

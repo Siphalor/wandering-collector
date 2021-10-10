@@ -22,7 +22,7 @@
 		],
 		"client": [],
 		"server": [],
-		"tweed:config": [
+		"tweed4:config": [
 			"de.siphalor.wanderingcollector.WCConfig"
 		]
 	},
