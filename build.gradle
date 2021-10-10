@@ -146,10 +146,10 @@ if (project.hasProperty("siphalorCurseForgeApi")) {
 			for (version in ((String) project.mod_mc_versions).split(";")) {
 				addGameVersion(version)
 			}
+			addGameVersion("Fabric")
 			relations {
 				embeddedLibrary "fabric-api"
 				embeddedLibrary "amecs"
-				embeddedLibrary "cloth-config"
 				embeddedLibrary "tweed-api"
 				optionalDependency "modmenu"
 			}
