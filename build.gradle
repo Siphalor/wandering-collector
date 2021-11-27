@@ -1,9 +1,9 @@
 plugins {
-	id 'fabric-loom' version '0.8-SNAPSHOT'
+	id 'fabric-loom' version '0.10-SNAPSHOT'
 	id 'maven-publish'
 	id 'com.matthewprenger.cursegradle' version '1.4.0'
 	id 'com.modrinth.minotaur' version '1.1.0'
-	id 'org.cadixdev.licenser' version '0.5.0'
+	id 'org.cadixdev.licenser' version '0.6.1'
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -19,6 +19,7 @@ minecraft {
 repositories {
 	maven { url "https://maven.siphalor.de" }
 	maven { url "https://maven.terraformersmc.com/releases" }
+	maven { url "https://jitpack.io" }
 }
 
 dependencies {
@@ -35,13 +36,13 @@ dependencies {
 	include(modImplementation("de.siphalor.tweed4:tweed4-data-$minecraft_major_version:1.2.0+"))
 	include(modImplementation("de.siphalor.tweed4:tweed4-data-hjson-$minecraft_major_version:1.1.0+"))
 	include(modImplementation("de.siphalor.tweed4:tweed4-tailor-screen-$minecraft_major_version:1.0.1+"))
-	include(modImplementation("de.siphalor.tweed4:tweed4-tailor-coat-$minecraft_major_version:1.0.1+"))
-	include(modImplementation("de.siphalor:coat-$minecraft_major_version:1.0.0-beta.12"))
+	include(modImplementation("de.siphalor.tweed4:tweed4-tailor-coat-$minecraft_major_version:1.0.2+"))
+	include(modImplementation("de.siphalor:coat-$minecraft_major_version:1.0.0-beta.14"))
 
-	modRuntime("com.terraformersmc:modmenu:2+") {
+	modRuntimeOnly("com.terraformersmc:modmenu:2+") {
 		exclude group: "net.fabricmc.fabric-api"
 	}
-	modRuntime("net.fabricmc.fabric-api:fabric-api:0.40.8+1.17")
+	modRuntimeOnly("net.fabricmc.fabric-api:fabric-api:0.40.8+1.17")
 }
 
 license {
@@ -86,13 +87,8 @@ publishing {
 	publications {
 		mavenJava(MavenPublication) {
 			artifactId = "${project.archives_base_name}-${project.minecraft_major_version}"
-			// add all the jars that should be included when publishing to maven
-			artifact(remapJar) {
-				builtBy remapJar
-			}
-			artifact(sourcesJar) {
-				builtBy remapSourcesJar
-			}
+
+			from components.java
 		}
 	}
 
