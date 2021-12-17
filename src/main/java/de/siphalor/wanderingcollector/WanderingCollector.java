@@ -17,11 +17,16 @@
 
 package de.siphalor.wanderingcollector;
 
+import de.siphalor.wanderingcollector.util.IItemEntity;
+import de.siphalor.wanderingcollector.util.IServerPlayerEntity;
 import net.fabricmc.api.ModInitializer;
-
+import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.UUID;
 
 public class WanderingCollector implements ModInitializer {
 
@@ -33,7 +38,7 @@ public class WanderingCollector implements ModInitializer {
     public static final String LOST_STACKS_KEY = MOD_ID + ":" + "lost_stacks";
     public static final String PLAYER_SPECIFIC_TRADES = MOD_ID + ":" + "player_specific_trades";
 
-    @Override
+	@Override
     public void onInitialize() {
         log(Level.INFO, "Initializing");
         //TODO: Initializer
@@ -43,4 +48,20 @@ public class WanderingCollector implements ModInitializer {
         LOGGER.log(level, "["+MOD_NAME+"] " + message);
     }
 
+
+	public static void addStackToThrower(ItemEntity item) {
+		UUID theFormerOwner = null;
+		if (WCConfig.includeDroppedStacks) {
+			theFormerOwner = item.getThrower();
+		}
+		if (theFormerOwner == null && item instanceof IItemEntity) {
+			theFormerOwner = ((IItemEntity) item).wanderingCollector$getFormerOwner();
+		}
+		if (theFormerOwner != null) {
+			PlayerEntity player = item.world.getPlayerByUuid(theFormerOwner);
+			if (player instanceof IServerPlayerEntity) {
+				((IServerPlayerEntity) player).wandering_collector$addLostStack(item.getStack());
+			}
+		}
+	}
 }

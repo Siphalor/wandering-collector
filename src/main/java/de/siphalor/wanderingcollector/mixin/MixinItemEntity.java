@@ -17,15 +17,12 @@
 
 package de.siphalor.wanderingcollector.mixin;
 
-import de.siphalor.wanderingcollector.WCConfig;
 import de.siphalor.wanderingcollector.WanderingCollector;
 import de.siphalor.wanderingcollector.util.IItemEntity;
-import de.siphalor.wanderingcollector.util.IServerPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.World;
@@ -84,7 +81,7 @@ public abstract class MixinItemEntity extends Entity implements IItemEntity {
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/ItemEntity;remove()V", ordinal = 1)
 	)
 	public void tickInject(CallbackInfo callbackInfo) {
-		addStackToThrower();
+		WanderingCollector.addStackToThrower((ItemEntity)(Object) this);
 	}
 
 	@Inject(
@@ -92,23 +89,6 @@ public abstract class MixinItemEntity extends Entity implements IItemEntity {
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/ItemEntity;remove()V")
 	)
 	public void onDeathInject(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-		addStackToThrower();
-	}
-
-	@Unique
-	private void addStackToThrower() {
-		UUID theFormerOwner = null;
-		if (WCConfig.includeDroppedStacks) {
-			theFormerOwner = thrower;
-		}
-		if (theFormerOwner == null) {
-			theFormerOwner = formerOwner;
-		}
-		if (theFormerOwner != null) {
-			PlayerEntity player = world.getPlayerByUuid(theFormerOwner);
-			if (player instanceof IServerPlayerEntity) {
-				((IServerPlayerEntity) player).wandering_collector$addLostStack(getStack());
-			}
-		}
+		WanderingCollector.addStackToThrower((ItemEntity)(Object) this);
 	}
 }
