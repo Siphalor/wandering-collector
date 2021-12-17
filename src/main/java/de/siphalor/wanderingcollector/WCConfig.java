@@ -28,6 +28,11 @@ import de.siphalor.tweed4.config.constraints.RangeConstraint;
 @ATweedConfig(file = WanderingCollector.MOD_ID, scope = ConfigScope.SMALLEST, environment = ConfigEnvironment.UNIVERSAL, casing = CaseFormat.LOWER_HYPHEN, tailors = "tweed4:coat")
 public class WCConfig {
 	@AConfigEntry(
+			comment = "Include manually dropped items in the Wandering Trader offers"
+	)
+	public static boolean includeDroppedStacks = false;
+
+	@AConfigEntry(
 			constraints = @AConfigConstraint(value = RangeConstraint.class, param = "0.."),
 			comment = "The maximum number of items that get remembered after loosing them"
 	)

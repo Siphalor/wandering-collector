@@ -17,6 +17,7 @@
 
 package de.siphalor.wanderingcollector.mixin;
 
+import de.siphalor.wanderingcollector.WCConfig;
 import de.siphalor.wanderingcollector.WanderingCollector;
 import de.siphalor.wanderingcollector.util.IItemEntity;
 import de.siphalor.wanderingcollector.util.IServerPlayerEntity;
@@ -96,7 +97,10 @@ public abstract class MixinItemEntity extends Entity implements IItemEntity {
 
 	@Unique
 	private void addStackToThrower() {
-		UUID theFormerOwner = thrower;
+		UUID theFormerOwner = null;
+		if (WCConfig.includeDroppedStacks) {
+			theFormerOwner = thrower;
+		}
 		if (theFormerOwner == null) {
 			theFormerOwner = formerOwner;
 		}
