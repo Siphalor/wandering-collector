@@ -66,12 +66,8 @@ public abstract class MixinWanderingTraderEntity extends MerchantEntity implemen
 			} else {
 				offers = new ArrayList<>(WCConfig.buyBackTrades);
 				for (int j = 0; j < Math.min(WCConfig.buyBackTrades, stackCompounds.size()); j++) {
-					offers.add(new TradeOffer(
-									new ItemStack(Items.EMERALD, Utils.randInclusive(random, WCConfig.minEmeraldsTrade, WCConfig.maxEmeraldsTrade)),
-									ItemStack.fromTag(stackCompounds.remove(j)),
-									1, 0, 1F
-							)
-					);
+					ItemStack stack = ItemStack.fromTag(stackCompounds.remove(j));
+					offers.add(new TradeOffer(WCConfig.defaultPrices.getPriceStack(stack), stack, 1, 0, 1F));
 				}
 			}
 			playerSpecificTrades.put(playerEntity.getUuid(), offers);
