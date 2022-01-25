@@ -3,6 +3,7 @@
 	"package": "de.siphalor.wanderingcollector.mixin",
 	"compatibilityLevel": "JAVA_8",
 	"mixins": [
+		"MixinEntity",
 		"MixinItemEntity",
 		"MixinMerchantInventory",
 		"MixinMerchantScreenHandler",

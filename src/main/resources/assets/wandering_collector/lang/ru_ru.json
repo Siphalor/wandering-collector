@@ -1,0 +1,12 @@
+{
+	"tweed4_tailor_screen.screen.wandering_collector": "Настройки Wandering Collector",
+	"tweed4_tailor_screen.screen.wandering_collector.include-dropped-stacks": "Include dropped stacks",
+	"tweed4_tailor_screen.screen.wandering_collector.max-lost-stack-amount": "Количество предметов для запоминания",
+	"tweed4_tailor_screen.screen.wandering_collector.buy-back-trades": "Количество сделок",
+	"tweed4_tailor_screen.screen.wandering_collector.default-prices": "Default Prices",
+	"tweed4_tailor_screen.screen.wandering_collector.default-prices.min-price": "Минимальная цена",
+	"tweed4_tailor_screen.screen.wandering_collector.default-prices.max-price": "Максимальная цена",
+	"tweed4_tailor_screen.screen.wandering_collector.default-prices.price-item": "Price item",
+	"tweed4_tailor_screen.screen.wandering_collector.default-prices.scale-price-with-count": "Scale with count",
+	"tweed4_tailor_screen.screen.wandering_collector.default-prices.min-price-scale": "Scale with count"
+}
