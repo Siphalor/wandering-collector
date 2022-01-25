@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Siphalor
+ * Copyright 2021-2022 Siphalor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,10 @@ package de.siphalor.wanderingcollector.mixin;
 
 import de.siphalor.wanderingcollector.WanderingCollector;
 import de.siphalor.wanderingcollector.util.IItemEntity;
-import de.siphalor.wanderingcollector.util.IServerPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.world.World;
@@ -83,7 +81,7 @@ public abstract class MixinItemEntity extends Entity implements IItemEntity {
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/ItemEntity;discard()V", ordinal = 1)
 	)
 	public void tickInject(CallbackInfo callbackInfo) {
-		addStackToThrower();
+		WanderingCollector.addStackToThrower((ItemEntity)(Object) this);
 	}
 
 	@Inject(
@@ -91,20 +89,6 @@ public abstract class MixinItemEntity extends Entity implements IItemEntity {
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/ItemEntity;discard()V")
 	)
 	public void onDeathInject(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-		addStackToThrower();
-	}
-
-	@Unique
-	private void addStackToThrower() {
-		UUID theFormerOwner = thrower;
-		if (theFormerOwner == null) {
-			theFormerOwner = formerOwner;
-		}
-		if (theFormerOwner != null) {
-			PlayerEntity player = world.getPlayerByUuid(theFormerOwner);
-			if (player instanceof IServerPlayerEntity) {
-				((IServerPlayerEntity) player).wandering_collector$addLostStack(getStack());
-			}
-		}
+		WanderingCollector.addStackToThrower((ItemEntity)(Object) this);
 	}
 }

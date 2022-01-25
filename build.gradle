@@ -30,6 +30,7 @@ dependencies {
 
 	include(modImplementation("net.fabricmc.fabric-api:fabric-api-base:0.3.0+a02b446318"))
 	include(modImplementation("net.fabricmc.fabric-api:fabric-networking-api-v1:1.0.13+cbda931818"))
+	include(modImplementation("net.fabricmc.fabric-api:fabric-tag-extensions-v0:1.2.3+cf39a74318"))
 
 	include(modImplementation("de.siphalor.tweed4:tweed4-base-$minecraft_major_version:1.3.1+"))
 	include(modImplementation("de.siphalor.tweed4:tweed4-annotated-$minecraft_major_version:1.2.0+"))

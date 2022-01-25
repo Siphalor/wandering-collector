@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Siphalor
+ * Copyright 2021-2022 Siphalor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,12 +66,8 @@ public abstract class MixinWanderingTraderEntity extends MerchantEntity implemen
 			} else {
 				offers = new ArrayList<>(WCConfig.buyBackTrades);
 				for (int j = 0; j < Math.min(WCConfig.buyBackTrades, stackCompounds.size()); j++) {
-					offers.add(new TradeOffer(
-									new ItemStack(Items.EMERALD, Utils.randInclusive(random, WCConfig.minEmeraldsTrade, WCConfig.maxEmeraldsTrade)),
-									ItemStack.fromNbt(stackCompounds.remove(j)),
-									1, 0, 1F
-							)
-					);
+					ItemStack stack = ItemStack.fromNbt(stackCompounds.remove(j));
+					offers.add(new TradeOffer(WCConfig.defaultPrices.getPriceStack(stack), stack, 1, 0, 1F));
 				}
 			}
 			playerSpecificTrades.put(playerEntity.getUuid(), offers);
