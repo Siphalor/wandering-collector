@@ -139,11 +139,10 @@ if (project.hasProperty("siphalorCurseForgeApi")) {
 			id = "443476"
 			releaseType = project.mod_release
 			changelogType = "markdown"
-			changelog = getChangelog()
-			//for (version in ((String) project.mod_mc_versions).split(";")) {
-				//addGameVersion(version)
-			//}
-			addGameVersion("1.18-Snapshot")
+			changelog = project.getChangelog()
+			for (version in ((String) project.mod_mc_versions).split(";")) {
+				addGameVersion(version)
+			}
 			addGameVersion("Fabric")
 			relations {
 				embeddedLibrary "fabric-api"
