@@ -27,7 +27,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Entity.class)
 public class MixinEntity {
-	@Inject(method = "baseTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;destroy()V"))
+	@Inject(method = "tickInVoid", at = @At("HEAD"))
 	public void onVoidRemove(CallbackInfo ci) {
 		//noinspection ConstantConditions
 		if ((Class) this.getClass() == ItemEntity.class) {
