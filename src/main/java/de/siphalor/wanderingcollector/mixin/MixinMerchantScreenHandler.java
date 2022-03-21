@@ -53,7 +53,7 @@ public abstract class MixinMerchantScreenHandler extends ScreenHandler {
 	@Inject(method = "getRecipes", at = @At("HEAD"), cancellable = true)
 	public void getOffersInject(CallbackInfoReturnable<TradeOfferList> cir) {
 		if (merchant instanceof IWanderingTraderEntity) {
-			cir.setReturnValue(((IWanderingTraderEntity) merchant).wandering_collector$getOffers(merchant.getCurrentCustomer()));
+			cir.setReturnValue(((IWanderingTraderEntity) merchant).wandering_collector$getOffers(merchant.getCustomer()));
 		}
 	}
 }

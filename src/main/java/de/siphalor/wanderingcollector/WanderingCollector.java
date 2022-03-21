@@ -20,13 +20,12 @@ package de.siphalor.wanderingcollector;
 import de.siphalor.wanderingcollector.util.IItemEntity;
 import de.siphalor.wanderingcollector.util.IServerPlayerEntity;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.tag.TagRegistry;
-import net.minecraft.block.Block;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
-import net.minecraft.tag.Tag;
+import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -43,7 +42,7 @@ public class WanderingCollector implements ModInitializer {
     public static final String LOST_STACKS_KEY = MOD_ID + ":" + "lost_stacks";
     public static final String PLAYER_SPECIFIC_TRADES = MOD_ID + ":" + "player_specific_trades";
 
-	public static final Tag<Item> DENY_TAG = TagRegistry.item(new Identifier(MOD_ID, "deny"));
+	public static final TagKey<Item> DENY_TAG = TagKey.of(Registry.ITEM_KEY, new Identifier(MOD_ID, "deny"));
 
 	@Override
     public void onInitialize() {
@@ -55,7 +54,7 @@ public class WanderingCollector implements ModInitializer {
 
 
 	public static void addStackToThrower(ItemEntity item) {
-		if (DENY_TAG.contains(item.getStack().getItem())) {
+		if (item.getStack().getItem().getRegistryEntry().isIn(DENY_TAG)) {
 			return;
 		}
 
