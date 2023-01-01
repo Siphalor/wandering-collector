@@ -17,11 +17,8 @@
 
 package de.siphalor.wanderingcollector.util;
 
-import net.minecraft.item.ItemStack;
-
-import java.util.List;
+import de.siphalor.wanderingcollector.LostItemStorage;
 
 public interface IServerPlayerEntity {
-	List<ItemStack> wandering_collector$getLostStacks();
-	void wandering_collector$addLostStack(ItemStack stack);
+	LostItemStorage wandering_collector$getLostItemStorage();
 }

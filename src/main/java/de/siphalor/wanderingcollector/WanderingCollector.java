@@ -68,7 +68,7 @@ public class WanderingCollector implements ModInitializer {
 		if (theFormerOwner != null) {
 			PlayerEntity player = item.world.getPlayerByUuid(theFormerOwner);
 			if (player instanceof IServerPlayerEntity) {
-				((IServerPlayerEntity) player).wandering_collector$addLostStack(item.getStack());
+				((IServerPlayerEntity) player).wandering_collector$getLostItemStorage().add(item.getStack());
 			}
 		}
 	}

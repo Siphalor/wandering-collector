@@ -58,14 +58,13 @@ public abstract class MixinWanderingTraderEntity extends MerchantEntity implemen
 		tradeOfferList.addAll(getOffers());
 		Collection<TradeOffer> offers = playerSpecificTrades.get(playerEntity.getUuid());
 		if (offers == null) {
-			List<ItemStack> stacks = ((IServerPlayerEntity) playerEntity).wandering_collector$getLostStacks();
-			if (stacks.isEmpty() || WCConfig.buyBackTrades <= 0) {
+			LostItemStorage storage = ((IServerPlayerEntity) playerEntity).wandering_collector$getLostItemStorage();
+			if (storage.isEmpty() || WCConfig.buyBackTrades <= 0) {
 				offers = Collections.emptyList();
 			} else {
 				offers = new ArrayList<>(WCConfig.buyBackTrades);
-				for (int j = 0; j < Math.min(WCConfig.buyBackTrades, stacks.size()); j++) {
-					ItemStack stack = stacks.remove(j);
-					offers.add(new TradeOffer(WCConfig.defaultPrices.getPriceStack(stack), stack, 1, 0, 1F));
+				for (ItemStack stack : storage.poll(WCConfig.buyBackTrades)) {
+					offers.add(new TradeOffer(WCConfig.defaultPrices.getPriceStack(stack), stack, 1, 1, 1F));
 				}
 			}
 			playerSpecificTrades.put(playerEntity.getUuid(), offers);
