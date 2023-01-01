@@ -67,14 +67,15 @@ processResources {
 // ensure that the encoding is set to UTF-8, no matter what the system default is
 // this fixes some edge cases with special characters not displaying correctly
 // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
 	options.encoding = "UTF-8"
 }
 
 // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
 // if it is present.
 // If you remove this task, sources will not be generated.
-task sourcesJar(type: Jar, dependsOn: classes) {
+tasks.register('sourcesJar', Jar) {
+	dependsOn classes
 	archiveClassifier.set("sources")
 	from sourceSets.main.allSource
 }
@@ -86,10 +87,10 @@ jar {
 // configure the maven publication
 publishing {
 	publications {
-		mavenJava(MavenPublication) {
+		register('mod', MavenPublication) {
 			artifactId = "${project.archives_base_name}-${project.minecraft_major_version}"
-
 			from components.java
+			java.withSourcesJar()
 		}
 	}
 
@@ -110,11 +111,11 @@ publishing {
 
 // Mod sites
 
-static def getChangelog() {
+static def getProjectChangelog() {
 	return 'git log -1 --format=format:##%x20%s%n%n%b%nRelease%x20by%x20%an --grep Version'.execute().text.trim()
 }
 
-task uploadToModSites {
+tasks.register('uploadToModSites') {
 	dependsOn build
 	group = "upload"
 }
@@ -126,7 +127,7 @@ if (project.hasProperty("curseforgeToken")) {
 			id = "317514"
 			releaseType = project.mod_release
 			changelogType = "markdown"
-			changelog = project.getChangelog()
+			changelog = getProjectChangelog()
 			addGameVersion("Fabric")
 			for (version in ((String) project.mod_mc_versions).split(";")) {
 				addGameVersion(version)
@@ -154,7 +155,7 @@ modrinth {
 	projectId = "enYiOcBu"
 	versionName = "[$project.mod_mc_version_specifier] $project.mod_version"
 	versionType = project.mod_release
-	changelog = project.getChangelog()
+	changelog = getProjectChangelog()
 	uploadFile = remapJar
 	gameVersions = project.mod_mc_versions.split(";") as List<String>
 	loaders = ["fabric"]
@@ -163,10 +164,10 @@ tasks.modrinth.group = "upload"
 
 if (project.hasProperty("githubToken")) {
 	githubRelease {
-		token project.githubToken
+		token project.githubToken.toString()
 		targetCommitish = project.minecraft_major_version
 		releaseName = "Version $project.mod_version for $project.mod_mc_version_specifier"
-		body = project.getChangelog()
+		body = getProjectChangelog()
 		releaseAssets remapJar.getArchiveFile()
 		prerelease = mod_release != "release"
 		overwrite = true
