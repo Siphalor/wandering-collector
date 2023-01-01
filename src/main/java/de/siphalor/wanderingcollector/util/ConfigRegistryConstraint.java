@@ -21,9 +21,10 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
 import de.siphalor.tweed4.config.constraints.AnnotationConstraint;
 import de.siphalor.wanderingcollector.WanderingCollector;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.InvalidIdentifierException;
-import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.Level;
 
 import java.util.Collections;
@@ -42,7 +43,7 @@ public class ConfigRegistryConstraint<T> implements AnnotationConstraint<String>
 
 	private Identifier getRegistryId() {
 		//noinspection unchecked,rawtypes
-		return ((Registry) Registry.REGISTRIES).getId(registry);
+		return ((Registry) Registries.REGISTRIES).getId(registry);
 	}
 
 	@Override
@@ -70,7 +71,7 @@ public class ConfigRegistryConstraint<T> implements AnnotationConstraint<String>
 	@Override
 	public void fromAnnotationParam(String param, Class<?> valueType) {
 		//noinspection unchecked
-		this.registry = (Registry<T>) Registry.REGISTRIES.get(Identifier.tryParse(param));
+		this.registry = (Registry<T>) Registries.REGISTRIES.get(Identifier.tryParse(param));
 		if (this.registry == null) {
 			WanderingCollector.log(Level.WARN, "Unknown config registry in constraint: " + param);
 		}

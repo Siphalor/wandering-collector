@@ -18,20 +18,18 @@
 package de.siphalor.wanderingcollector.mixin;
 
 import com.mojang.authlib.GameProfile;
-import de.siphalor.wanderingcollector.util.IItemEntity;
-import de.siphalor.wanderingcollector.util.IServerPlayerEntity;
 import de.siphalor.wanderingcollector.WCConfig;
 import de.siphalor.wanderingcollector.WanderingCollector;
+import de.siphalor.wanderingcollector.util.IItemEntity;
+import de.siphalor.wanderingcollector.util.IServerPlayerEntity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
-import net.minecraft.network.encryption.PlayerPublicKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -48,9 +46,10 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements IS
 	@Unique
 	private ArrayList<NbtCompound> lostStacks = new ArrayList<>();
 
-	public MixinServerPlayerEntity(World world, BlockPos pos, float yaw, GameProfile gameProfile, @Nullable PlayerPublicKey publicKey) {
-		super(world, pos, yaw, gameProfile, publicKey);
+	public MixinServerPlayerEntity(World world, BlockPos blockPos, float f, GameProfile gameProfile) {
+		super(world, blockPos, f, gameProfile);
 	}
+
 
 	@Inject(
 			method = "dropItem",

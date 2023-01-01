@@ -23,9 +23,9 @@ import net.fabricmc.api.ModInitializer;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
-import net.minecraft.tag.TagKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,7 +42,7 @@ public class WanderingCollector implements ModInitializer {
     public static final String LOST_STACKS_KEY = MOD_ID + ":" + "lost_stacks";
     public static final String PLAYER_SPECIFIC_TRADES = MOD_ID + ":" + "player_specific_trades";
 
-	public static final TagKey<Item> DENY_TAG = TagKey.of(Registry.ITEM_KEY, new Identifier(MOD_ID, "deny"));
+	public static final TagKey<Item> DENY_TAG = TagKey.of(RegistryKeys.ITEM, new Identifier(MOD_ID, "deny"));
 
 	@Override
     public void onInitialize() {
@@ -54,7 +54,7 @@ public class WanderingCollector implements ModInitializer {
 
 
 	public static void addStackToThrower(ItemEntity item) {
-		if (item.getStack().getItem().getRegistryEntry().isIn(DENY_TAG)) {
+		if (item.getStack().isIn(DENY_TAG)) {
 			return;
 		}
 

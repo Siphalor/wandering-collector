@@ -30,9 +30,9 @@ import de.siphalor.wanderingcollector.util.Utils;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.Level;
 
 import java.util.Random;
@@ -92,7 +92,7 @@ public class WCConfig {
 		public float minPriceScale = 0.3f;
 
 		public ItemStack getPriceStack(ItemStack forStack) {
-			Item priceItem = Registry.ITEM.get(new Identifier(this.priceItem));
+			Item priceItem = Registries.ITEM.get(new Identifier(this.priceItem));
 			if (priceItem == Items.AIR) {
 				WanderingCollector.log(Level.WARN, "Unknown price item \"" + this.priceItem + "\", defaulting to minecraft:emerald");
 				priceItem = Items.EMERALD;
