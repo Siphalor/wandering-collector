@@ -30,7 +30,7 @@ public class MixinEntity {
 	@Inject(method = "baseTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;destroy()V"))
 	public void onVoidRemove(CallbackInfo ci) {
 		//noinspection ConstantConditions
-		if ((Class) this.getClass() == ItemEntity.class) {
+		if ((Object) this instanceof ItemEntity) {
 			WanderingCollector.addStackToThrower((ItemEntity)(Object) this);
 		}
 	}

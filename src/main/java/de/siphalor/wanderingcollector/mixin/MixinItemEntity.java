@@ -23,11 +23,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -47,10 +45,6 @@ public abstract class MixinItemEntity extends Entity implements IItemEntity {
 	public MixinItemEntity(EntityType<?> type, World world) {
 		super(type, world);
 	}
-
-	@Shadow public abstract ItemStack getStack();
-
-	@Shadow private UUID thrower;
 
 	@Override
 	public UUID wanderingCollector$getFormerOwner() {
