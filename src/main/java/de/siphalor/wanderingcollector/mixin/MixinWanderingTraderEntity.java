@@ -20,13 +20,11 @@ package de.siphalor.wanderingcollector.mixin;
 import de.siphalor.wanderingcollector.*;
 import de.siphalor.wanderingcollector.util.IServerPlayerEntity;
 import de.siphalor.wanderingcollector.util.IWanderingTraderEntity;
-import de.siphalor.wanderingcollector.util.Utils;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.MerchantEntity;
 import net.minecraft.entity.passive.WanderingTraderEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -60,13 +58,13 @@ public abstract class MixinWanderingTraderEntity extends MerchantEntity implemen
 		tradeOfferList.addAll(getOffers());
 		Collection<TradeOffer> offers = playerSpecificTrades.get(playerEntity.getUuid());
 		if (offers == null) {
-			ArrayList<CompoundTag> stackCompounds = ((IServerPlayerEntity) playerEntity).wandering_collector$getLostStackCompounds();
-			if (stackCompounds.isEmpty() || WCConfig.buyBackTrades <= 0) {
+			List<ItemStack> stacks = ((IServerPlayerEntity) playerEntity).wandering_collector$getLostStacks();
+			if (stacks.isEmpty() || WCConfig.buyBackTrades <= 0) {
 				offers = Collections.emptyList();
 			} else {
 				offers = new ArrayList<>(WCConfig.buyBackTrades);
-				for (int j = 0; j < Math.min(WCConfig.buyBackTrades, stackCompounds.size()); j++) {
-					ItemStack stack = ItemStack.fromTag(stackCompounds.remove(j));
+				for (int j = 0; j < Math.min(WCConfig.buyBackTrades, stacks.size()); j++) {
+					ItemStack stack = stacks.remove(j);
 					offers.add(new TradeOffer(WCConfig.defaultPrices.getPriceStack(stack), stack, 1, 0, 1F));
 				}
 			}

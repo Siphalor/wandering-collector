@@ -18,11 +18,10 @@
 package de.siphalor.wanderingcollector.util;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public interface IServerPlayerEntity {
-	ArrayList<CompoundTag> wandering_collector$getLostStackCompounds();
+	List<ItemStack> wandering_collector$getLostStacks();
 	void wandering_collector$addLostStack(ItemStack stack);
 }

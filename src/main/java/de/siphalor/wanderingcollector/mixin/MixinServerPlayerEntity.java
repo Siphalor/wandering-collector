@@ -18,15 +18,16 @@
 package de.siphalor.wanderingcollector.mixin;
 
 import com.mojang.authlib.GameProfile;
-import de.siphalor.wanderingcollector.util.IItemEntity;
-import de.siphalor.wanderingcollector.util.IServerPlayerEntity;
 import de.siphalor.wanderingcollector.WCConfig;
 import de.siphalor.wanderingcollector.WanderingCollector;
+import de.siphalor.wanderingcollector.util.IItemEntity;
+import de.siphalor.wanderingcollector.util.IServerPlayerEntity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -39,12 +40,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 @Mixin(ServerPlayerEntity.class)
 public abstract class MixinServerPlayerEntity extends PlayerEntity implements IServerPlayerEntity {
 	@Unique
-	private ArrayList<CompoundTag> lostStacks = new ArrayList<>();
+	private List<ItemStack> lostStacks = new ArrayList<>();
 
 	public MixinServerPlayerEntity(World world, BlockPos pos, float yaw, GameProfile profile) {
 		super(world, pos, yaw, profile);
@@ -63,7 +64,7 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements IS
 
 	@Inject(method = "copyFrom", at = @At("RETURN"))
 	public void copyFromInject(ServerPlayerEntity other, boolean alive, CallbackInfo callbackInfo) {
-		lostStacks = ((IServerPlayerEntity) other).wandering_collector$getLostStackCompounds();
+		lostStacks = ((IServerPlayerEntity) other).wandering_collector$getLostStacks();
 	}
 
 	@Inject(method = "readCustomDataFromTag", at = @At("RETURN"))
@@ -71,30 +72,34 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements IS
 		lostStacks.clear();
 		if (tag.contains(WanderingCollector.LOST_STACKS_KEY, 9)) {
 			ListTag lostStacksTag = tag.getList(WanderingCollector.LOST_STACKS_KEY, 10);
-			//noinspection unchecked,RedundantCast
-			lostStacks.addAll((Collection<? extends CompoundTag>)(Object) lostStacksTag.copy());
+			for (Tag stackTag : lostStacksTag) {
+				if (stackTag instanceof CompoundTag) {
+					lostStacks.add(ItemStack.fromTag((CompoundTag) stackTag));
+				}
+			}
 		}
 	}
 
 	@Inject(method = "writeCustomDataToTag", at = @At("RETURN"))
 	public void writeCustomDataToTagInject(CompoundTag tag, CallbackInfo callbackInfo) {
 		ListTag lostStacksTag = new ListTag();
-		lostStacksTag.addAll(lostStacks);
+		for (ItemStack lostStack : lostStacks) {
+			lostStacksTag.add(lostStack.toTag(new CompoundTag()));
+		}
 		tag.put(WanderingCollector.LOST_STACKS_KEY, lostStacksTag);
 	}
 
 	@Override
-	public ArrayList<CompoundTag> wandering_collector$getLostStackCompounds() {
+	public List<ItemStack> wandering_collector$getLostStacks() {
 		return lostStacks;
 	}
 
 	@Override
 	public void wandering_collector$addLostStack(ItemStack stack) {
-		CompoundTag compoundTag = stack.toTag(new CompoundTag());
 		if (lostStacks.size() < WCConfig.maxLostStackAmount) {
-			lostStacks.add(compoundTag);
+			lostStacks.add(stack);
 		} else {
-			lostStacks.set(random.nextInt(WCConfig.maxLostStackAmount), compoundTag);
+			lostStacks.set(random.nextInt(WCConfig.maxLostStackAmount), stack);
 		}
 	}
 }
