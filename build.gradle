@@ -2,7 +2,8 @@ plugins {
 	id 'fabric-loom' version '1.0-SNAPSHOT'
 	id 'maven-publish'
 	id 'com.matthewprenger.cursegradle' version '1.4.0'
-	id 'com.modrinth.minotaur' version '1.1.0'
+	id 'com.modrinth.minotaur' version '2.3.1'
+	id 'com.github.breadmoirai.github-release' version '2.4.1'
 	id 'org.cadixdev.licenser' version '0.6.1'
 }
 
@@ -35,9 +36,9 @@ dependencies {
 	include(modImplementation("de.siphalor.tweed4:tweed4-annotated-$minecraft_major_version:1.3.1+mc1.19.3"))
 	include(modImplementation("de.siphalor.tweed4:tweed4-data-$minecraft_major_version:1.2.1+mc1.19.3"))
 	include(modImplementation("de.siphalor.tweed4:tweed4-data-hjson-$minecraft_major_version:1.1.1+mc1.19.3"))
-	include(modImplementation("de.siphalor.tweed4:tweed4-tailor-screen-$minecraft_major_version:1.1.3+mc1.19.3"))
+	include(modImplementation("de.siphalor.tweed4:tweed4-tailor-screen-$minecraft_major_version:1.1.4+mc1.19.3"))
 	include(modImplementation("de.siphalor.tweed4:tweed4-tailor-coat-$minecraft_major_version:1.1.3+mc1.19.3"))
-	include(modImplementation("de.siphalor:coat-$minecraft_major_version:1.0.0-beta.18+mc1.19.3"))
+	include(modImplementation("de.siphalor:coat-$minecraft_major_version:1.0.0-beta.19+mc1.19.3"))
 
 	modLocalRuntime("com.terraformersmc:modmenu:5+") {
 		exclude group: "net.fabricmc.fabric-api"
@@ -66,14 +67,15 @@ processResources {
 // ensure that the encoding is set to UTF-8, no matter what the system default is
 // this fixes some edge cases with special characters not displaying correctly
 // see http://yodaconditions.net/blog/fix-for-java-file-encoding-problems-with-gradle.html
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
 	options.encoding = "UTF-8"
 }
 
 // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
 // if it is present.
 // If you remove this task, sources will not be generated.
-task sourcesJar(type: Jar, dependsOn: classes) {
+tasks.register('sourcesJar', Jar) {
+	dependsOn classes
 	archiveClassifier.set("sources")
 	from sourceSets.main.allSource
 }
@@ -85,10 +87,10 @@ jar {
 // configure the maven publication
 publishing {
 	publications {
-		mavenJava(MavenPublication) {
+		register('mod', MavenPublication) {
 			artifactId = "${project.archives_base_name}-${project.minecraft_major_version}"
-
 			from components.java
+			java.withSourcesJar()
 		}
 	}
 
@@ -109,40 +111,27 @@ publishing {
 
 // Mod sites
 
-def getChangelog() {
-	def commits = 'git log -20 --format=oneline'.execute().text.readLines()
-	def versionCommit = null
-	for (commit in commits) {
-		if (commit.contains('Version')) {
-			versionCommit = commit.split(' ')[0]
-			break
-		}
-	}
-	if (versionCommit == null) {
-		return """## Version ${project.mod_version}
-
-No changelog found!"""
-	}
-	return ('git log -1 --format=format:##%x20%s%n%n%b%nRelease%x20by%x20%an ' + versionCommit).execute().text.trim()
+static def getProjectChangelog() {
+	return 'git log -1 --format=format:##%x20%s%n%n%b%nRelease%x20by%x20%an --grep Version'.execute().text.trim()
 }
 
-task uploadToModSites {
+tasks.register('uploadToModSites') {
 	dependsOn build
 	group = "upload"
 }
 
-if (project.hasProperty("siphalorCurseForgeApi")) {
+if (project.hasProperty("curseforgeToken")) {
 	curseforge {
-		apiKey project.siphalorCurseForgeApi
+		apiKey project.curseforgeToken
 		project {
-			id = "443476"
+			id = "317514"
 			releaseType = project.mod_release
 			changelogType = "markdown"
-			changelog = project.getChangelog()
+			changelog = getProjectChangelog()
+			addGameVersion("Fabric")
 			for (version in ((String) project.mod_mc_versions).split(";")) {
 				addGameVersion(version)
 			}
-			addGameVersion("Fabric")
 			relations {
 				embeddedLibrary "fabric-api"
 				embeddedLibrary "amecs"
@@ -157,23 +146,31 @@ if (project.hasProperty("siphalorCurseForgeApi")) {
 	uploadToModSites.finalizedBy(tasks.curseforge)
 }
 
-import com.modrinth.minotaur.TaskModrinthUpload
-if (project.hasProperty("siphalorModrinthApi")) {
-	task modrinth (type: TaskModrinthUpload) {
-		group = "upload"
-		dependsOn(build)
-
-		token = project.siphalorModrinthApi
-		projectId = "enYiOcBu"
-		versionNumber = version
-		versionName = "[${project.mod_mc_version_specifier}] ${project.mod_version}"
-		changelog = getChangelog()
-		uploadFile = remapJar
-		releaseType = project.mod_release
-		for (version in ((String) project.mod_mc_versions).split(";")) {
-			addGameVersion(version)
-		}
-		addLoader("fabric")
+modrinth {
+	if (project.hasProperty("modrinthToken")) {
+		token = project.modrinthToken
+		uploadToModSites.finalizedBy(tasks.modrinth)
 	}
-	uploadToModSites.finalizedBy(tasks.modrinth)
+
+	projectId = "enYiOcBu"
+	versionName = "[$project.mod_mc_version_specifier] $project.mod_version"
+	versionType = project.mod_release
+	changelog = getProjectChangelog()
+	uploadFile = remapJar
+	gameVersions = project.mod_mc_versions.split(";") as List<String>
+	loaders = ["fabric"]
+}
+tasks.modrinth.group = "upload"
+
+if (project.hasProperty("githubToken")) {
+	githubRelease {
+		token project.githubToken.toString()
+		targetCommitish = project.minecraft_major_version
+		releaseName = "Version $project.mod_version for $project.mod_mc_version_specifier"
+		body = getProjectChangelog()
+		releaseAssets remapJar.getArchiveFile()
+		prerelease = mod_release != "release"
+		overwrite = true
+	}
+	uploadToModSites.finalizedBy(tasks.githubRelease)
 }
