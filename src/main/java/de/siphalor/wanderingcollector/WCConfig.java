@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 Siphalor
+ * Copyright 2021-2023 Siphalor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,9 +49,23 @@ public class WCConfig {
 
 	@AConfigEntry(
 			constraints = @AConfigConstraint(value = RangeConstraint.class, param = "0.."),
-			comment = "The maximum number of items that get remembered after loosing them"
+			comment = "The maximum number of stacks that get remembered after loosing them"
 	)
 	public static int maxLostStackAmount = 64;
+
+	@AConfigEntry(
+			comment = "Defines in which order lost stacks will be used for the Wandering Traders' offers." +
+					" - NEWEST: The newest lost stacks will be used first." +
+					" - OLDEST: The oldest lost stacks will be used first." +
+					" - RANDOM: Lost stacks will be used in a random order."
+	)
+	public static LostItemStorage.PollMode offerCreation = LostItemStorage.PollMode.RANDOM;
+
+	@AConfigEntry(
+			comment = "Lost stacks that are stackable will be tried to be merged into existing stacks"
+	)
+	public static boolean combineLostStacks = true;
+
 	@AConfigEntry(
 			constraints = @AConfigConstraint(value = RangeConstraint.class, param = "0.."),
 			comment = "The number of buy-back trades Wandering Traders will offer"
