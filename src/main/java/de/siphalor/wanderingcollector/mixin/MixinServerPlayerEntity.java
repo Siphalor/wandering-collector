@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 Siphalor
+ * Copyright 2021-2023 Siphalor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,15 +18,13 @@
 package de.siphalor.wanderingcollector.mixin;
 
 import com.mojang.authlib.GameProfile;
+import de.siphalor.wanderingcollector.LostItemStorage;
 import de.siphalor.wanderingcollector.util.IItemEntity;
 import de.siphalor.wanderingcollector.util.IServerPlayerEntity;
-import de.siphalor.wanderingcollector.WCConfig;
-import de.siphalor.wanderingcollector.WanderingCollector;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.network.encryption.PlayerPublicKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
@@ -40,13 +38,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 @Mixin(ServerPlayerEntity.class)
 public abstract class MixinServerPlayerEntity extends PlayerEntity implements IServerPlayerEntity {
 	@Unique
-	private ArrayList<NbtCompound> lostStacks = new ArrayList<>();
+	private LostItemStorage lostItemStorage = new LostItemStorage();
 
 	public MixinServerPlayerEntity(World world, BlockPos pos, float yaw, GameProfile gameProfile, @Nullable PlayerPublicKey publicKey) {
 		super(world, pos, yaw, gameProfile, publicKey);
@@ -65,38 +60,21 @@ public abstract class MixinServerPlayerEntity extends PlayerEntity implements IS
 
 	@Inject(method = "copyFrom", at = @At("RETURN"))
 	public void copyFromInject(ServerPlayerEntity other, boolean alive, CallbackInfo callbackInfo) {
-		lostStacks = ((IServerPlayerEntity) other).wandering_collector$getLostStackCompounds();
+		lostItemStorage = ((IServerPlayerEntity) other).wandering_collector$getLostItemStorage();
 	}
 
 	@Inject(method = "readCustomDataFromNbt", at = @At("RETURN"))
 	public void readCustomDataFromTagInject(NbtCompound tag, CallbackInfo callbackInfo) {
-		lostStacks.clear();
-		if (tag.contains(WanderingCollector.LOST_STACKS_KEY, 9)) {
-			NbtList lostStacksTag = tag.getList(WanderingCollector.LOST_STACKS_KEY, 10);
-			//noinspection unchecked,RedundantCast
-			lostStacks.addAll((Collection<? extends NbtCompound>)(Object) lostStacksTag.copy());
-		}
+		lostItemStorage.read(tag);
 	}
 
 	@Inject(method = "writeCustomDataToNbt", at = @At("RETURN"))
 	public void writeCustomDataToTagInject(NbtCompound tag, CallbackInfo callbackInfo) {
-		NbtList lostStacksTag = new NbtList();
-		lostStacksTag.addAll(lostStacks);
-		tag.put(WanderingCollector.LOST_STACKS_KEY, lostStacksTag);
+		lostItemStorage.write(tag);
 	}
 
 	@Override
-	public ArrayList<NbtCompound> wandering_collector$getLostStackCompounds() {
-		return lostStacks;
-	}
-
-	@Override
-	public void wandering_collector$addLostStack(ItemStack stack) {
-		NbtCompound compoundTag = stack.writeNbt(new NbtCompound());
-		if (lostStacks.size() < WCConfig.maxLostStackAmount) {
-			lostStacks.add(compoundTag);
-		} else {
-			lostStacks.set(random.nextInt(WCConfig.maxLostStackAmount), compoundTag);
-		}
+	public LostItemStorage wandering_collector$getLostItemStorage() {
+		return lostItemStorage;
 	}
 }

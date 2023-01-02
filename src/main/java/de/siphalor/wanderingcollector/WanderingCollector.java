@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 Siphalor
+ * Copyright 2021-2023 Siphalor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,7 +68,7 @@ public class WanderingCollector implements ModInitializer {
 		if (theFormerOwner != null) {
 			PlayerEntity player = item.world.getPlayerByUuid(theFormerOwner);
 			if (player instanceof IServerPlayerEntity) {
-				((IServerPlayerEntity) player).wandering_collector$addLostStack(item.getStack());
+				((IServerPlayerEntity) player).wandering_collector$getLostItemStorage().add(item.getStack());
 			}
 		}
 	}
