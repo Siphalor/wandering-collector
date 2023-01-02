@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 Siphalor
+ * Copyright 2021-2023 Siphalor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import de.siphalor.wanderingcollector.util.IItemEntity;
 import de.siphalor.wanderingcollector.util.IServerPlayerEntity;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.tag.TagRegistry;
-import net.minecraft.block.Block;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -69,7 +68,7 @@ public class WanderingCollector implements ModInitializer {
 		if (theFormerOwner != null) {
 			PlayerEntity player = item.world.getPlayerByUuid(theFormerOwner);
 			if (player instanceof IServerPlayerEntity) {
-				((IServerPlayerEntity) player).wandering_collector$addLostStack(item.getStack());
+				((IServerPlayerEntity) player).wandering_collector$getLostItemStorage().add(item.getStack());
 			}
 		}
 	}

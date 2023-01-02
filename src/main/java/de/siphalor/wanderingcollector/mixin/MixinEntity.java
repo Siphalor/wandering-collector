@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 Siphalor
+ * Copyright 2021-2023 Siphalor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ public class MixinEntity {
 	@Inject(method = "baseTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;destroy()V"))
 	public void onVoidRemove(CallbackInfo ci) {
 		//noinspection ConstantConditions
-		if ((Class) this.getClass() == ItemEntity.class) {
+		if ((Object) this instanceof ItemEntity) {
 			WanderingCollector.addStackToThrower((ItemEntity)(Object) this);
 		}
 	}

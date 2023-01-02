@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 Siphalor
+ * Copyright 2021-2023 Siphalor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,8 @@
 
 package de.siphalor.wanderingcollector.util;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import java.util.ArrayList;
+import de.siphalor.wanderingcollector.LostItemStorage;
 
 public interface IServerPlayerEntity {
-	ArrayList<NbtCompound> wandering_collector$getLostStackCompounds();
-	void wandering_collector$addLostStack(ItemStack stack);
+	LostItemStorage wandering_collector$getLostItemStorage();
 }

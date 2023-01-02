@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 Siphalor
+ * Copyright 2021-2023 Siphalor
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,13 +20,11 @@ package de.siphalor.wanderingcollector.mixin;
 import de.siphalor.wanderingcollector.*;
 import de.siphalor.wanderingcollector.util.IServerPlayerEntity;
 import de.siphalor.wanderingcollector.util.IWanderingTraderEntity;
-import de.siphalor.wanderingcollector.util.Utils;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.MerchantEntity;
 import net.minecraft.entity.passive.WanderingTraderEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
@@ -60,14 +58,13 @@ public abstract class MixinWanderingTraderEntity extends MerchantEntity implemen
 		tradeOfferList.addAll(getOffers());
 		Collection<TradeOffer> offers = playerSpecificTrades.get(playerEntity.getUuid());
 		if (offers == null) {
-			ArrayList<NbtCompound> stackCompounds = ((IServerPlayerEntity) playerEntity).wandering_collector$getLostStackCompounds();
-			if (stackCompounds.isEmpty() || WCConfig.buyBackTrades <= 0) {
+			LostItemStorage storage = ((IServerPlayerEntity) playerEntity).wandering_collector$getLostItemStorage();
+			if (storage.isEmpty() || WCConfig.buyBackTrades <= 0) {
 				offers = Collections.emptyList();
 			} else {
 				offers = new ArrayList<>(WCConfig.buyBackTrades);
-				for (int j = 0; j < Math.min(WCConfig.buyBackTrades, stackCompounds.size()); j++) {
-					ItemStack stack = ItemStack.fromNbt(stackCompounds.remove(j));
-					offers.add(new TradeOffer(WCConfig.defaultPrices.getPriceStack(stack), stack, 1, 0, 1F));
+				for (ItemStack stack : storage.poll(WCConfig.buyBackTrades)) {
+					offers.add(new TradeOffer(WCConfig.defaultPrices.getPriceStack(stack), stack, 1, 1, 1F));
 				}
 			}
 			playerSpecificTrades.put(playerEntity.getUuid(), offers);
