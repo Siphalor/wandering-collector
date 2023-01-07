@@ -124,7 +124,7 @@ if (project.hasProperty("curseforgeToken")) {
 	curseforge {
 		apiKey project.curseforgeToken
 		project {
-			id = "317514"
+			id = "443476"
 			releaseType = project.mod_release
 			changelogType = "markdown"
 			changelog = getProjectChangelog()
