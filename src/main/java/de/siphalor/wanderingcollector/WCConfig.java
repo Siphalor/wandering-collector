@@ -42,33 +42,19 @@ import java.util.Random;
 public class WCConfig {
 	private static final Random random = new Random();
 
-	@AConfigEntry(
-			comment = "Include manually dropped items in the Wandering Trader offers"
-	)
 	public static boolean includeDroppedStacks = false;
 
 	@AConfigEntry(
-			constraints = @AConfigConstraint(value = RangeConstraint.class, param = "0.."),
-			comment = "The maximum number of stacks that get remembered after loosing them"
+			constraints = @AConfigConstraint(value = RangeConstraint.class, param = "0..")
 	)
 	public static int maxLostStackAmount = 64;
 
-	@AConfigEntry(
-			comment = "Defines in which order lost stacks will be used for the Wandering Traders' offers." +
-					" - NEWEST: The newest lost stacks will be used first." +
-					" - OLDEST: The oldest lost stacks will be used first." +
-					" - RANDOM: Lost stacks will be used in a random order."
-	)
 	public static LostItemStorage.PollMode offerCreation = LostItemStorage.PollMode.RANDOM;
 
-	@AConfigEntry(
-			comment = "Lost stacks that are stackable will be tried to be merged into existing stacks"
-	)
 	public static boolean combineLostStacks = true;
 
 	@AConfigEntry(
-			constraints = @AConfigConstraint(value = RangeConstraint.class, param = "0.."),
-			comment = "The number of buy-back trades Wandering Traders will offer"
+			constraints = @AConfigConstraint(value = RangeConstraint.class, param = "0..")
 	)
 	public static int buyBackTrades = 2;
 
@@ -77,31 +63,24 @@ public class WCConfig {
 	@AConfigBackground("minecraft:textures/block/green_terracotta.png")
 	public static class PriceDefinition {
 		@AConfigEntry(
-				constraints = @AConfigConstraint(value = RangeConstraint.class, param = "1..64"),
-				comment = "The minimum emerald price to buy back a stack"
+				constraints = @AConfigConstraint(value = RangeConstraint.class, param = "1..64")
 		)
 		public int minPrice = 32;
 
 		@AConfigEntry(
-				constraints = @AConfigConstraint(value = RangeConstraint.class, param = "1..64"),
-				comment = "The maximum emerald price to buy back a stack"
+				constraints = @AConfigConstraint(value = RangeConstraint.class, param = "1..64")
 		)
 		public int maxPrice = 64;
 
 		@AConfigEntry(
-				constraints = @AConfigConstraint(value = ConfigRegistryConstraint.class, param = "minecraft:item"),
-				comment = "The item that must be paid with for the trade offer"
+				constraints = @AConfigConstraint(value = ConfigRegistryConstraint.class, param = "minecraft:item")
 		)
 		public String priceItem = "minecraft:emerald";
 
-		@AConfigEntry(
-				comment = "Whether the price will be scaled with the amount of items in the stack."
-		)
 		public boolean scalePriceWithCount = true;
 
 		@AConfigEntry(
-				constraints = @AConfigConstraint(value = RangeConstraint.class, param = "0..1"),
-				comment = "The minimum percentage that scale-price-with-amount will scale to."
+				constraints = @AConfigConstraint(value = RangeConstraint.class, param = "0..1")
 		)
 		public float minPriceScale = 0.3f;
 

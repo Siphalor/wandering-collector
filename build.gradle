@@ -32,18 +32,27 @@ dependencies {
 	include(modImplementation(fabricApi.module("fabric-networking-api-v1", project.fabric_api_version)))
 	include(modImplementation(fabricApi.module("fabric-tag-extensions-v0", project.fabric_api_version)))
 
-	include(modImplementation("de.siphalor.tweed4:tweed4-base-$minecraft_major_version:1.7.1+mc1.16.5"))
-	include(modImplementation("de.siphalor.tweed4:tweed4-annotated-$minecraft_major_version:1.3.1+mc1.16.5"))
-	include(modImplementation("de.siphalor.tweed4:tweed4-data-$minecraft_major_version:1.2.1+mc1.16.5"))
-	include(modImplementation("de.siphalor.tweed4:tweed4-data-hjson-$minecraft_major_version:1.1.0+mc1.16.5"))
-	include(modImplementation("de.siphalor.tweed4:tweed4-tailor-screen-$minecraft_major_version:1.1.4+mc1.16.5"))
-	include(modImplementation("de.siphalor.tweed4:tweed4-tailor-coat-$minecraft_major_version:1.1.3+mc1.16.5"))
-	include(modImplementation("de.siphalor:coat-$minecraft_major_version:1.0.0-beta.19+mc1.16.5"))
+	include(modApi(platform("de.siphalor.tweed4:tweed4-bom-$minecraft_major_version:$tweed_version")))
+	[
+	        "base", "annotated",
+			"data", "data-hjson",
+			"tailor-screen", "tailor-coat",
+			"tailor-lang-json-descriptions"
+	].each { include(modApi("de.siphalor.tweed4:tweed4-$it-$minecraft_major_version")) }
+	include(modApi("de.siphalor:coat-$minecraft_major_version:$coat_version"))
 
-	modRuntimeOnly("com.terraformersmc:modmenu:1.16+") {
+	modRuntimeOnly("com.terraformersmc:modmenu:$modmenu_version") {
 		exclude group: "net.fabricmc.fabric-api"
 	}
-	modRuntimeOnly("net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}")
+	modRuntimeOnly("net.fabricmc.fabric-api:fabric-api:$fabric_api_version")
+}
+
+// Workaround for https://github.com/gradle/gradle/issues/10195
+configurations.include.transitive = true
+configurations.include.dependencies.each {
+	if (!it.name.contains("bom")) {
+		it.transitive = false
+	}
 }
 
 license {
