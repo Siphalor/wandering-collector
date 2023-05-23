@@ -138,7 +138,8 @@ if (project.hasProperty("curseforgeToken")) {
 			changelogType = "markdown"
 			changelog = getProjectChangelog()
 			addGameVersion("Fabric")
-			for (version in ((String) project.mod_mc_versions).split(";")) {
+            def mcVersions = project.hasProperty("curseforge_mc_versions") ? project.curseforge_mc_versions : project.minecraft_version
+			for (version in mcVersions.split(";")) {
 				addGameVersion(version)
 			}
 			relations {
