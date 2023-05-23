@@ -65,7 +65,7 @@ public class WanderingCollector implements ModInitializer {
 		if (theFormerOwner == null && item instanceof IItemEntity) {
 			UUID ownerUuid = ((IItemEntity) item).wanderingCollector$getFormerOwner();
             if (ownerUuid != null) {
-                theFormerOwner = item.world.getPlayerByUuid(ownerUuid);
+                theFormerOwner = item.getWorld().getPlayerByUuid(ownerUuid);
             }
 		}
 		if (theFormerOwner instanceof IServerPlayerEntity) {
