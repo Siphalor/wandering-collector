@@ -20,8 +20,8 @@ package de.siphalor.wanderingcollector;
 import de.siphalor.wanderingcollector.util.IItemEntity;
 import de.siphalor.wanderingcollector.util.IServerPlayerEntity;
 import net.fabricmc.api.ModInitializer;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
@@ -58,18 +58,18 @@ public class WanderingCollector implements ModInitializer {
 			return;
 		}
 
-		UUID theFormerOwner = null;
+		Entity theFormerOwner = null;
 		if (WCConfig.includeDroppedStacks) {
-			theFormerOwner = item.getThrower();
+			theFormerOwner = item.getOwner();
 		}
 		if (theFormerOwner == null && item instanceof IItemEntity) {
-			theFormerOwner = ((IItemEntity) item).wanderingCollector$getFormerOwner();
+			UUID ownerUuid = ((IItemEntity) item).wanderingCollector$getFormerOwner();
+            if (ownerUuid != null) {
+                theFormerOwner = item.world.getPlayerByUuid(ownerUuid);
+            }
 		}
-		if (theFormerOwner != null) {
-			PlayerEntity player = item.world.getPlayerByUuid(theFormerOwner);
-			if (player instanceof IServerPlayerEntity) {
-				((IServerPlayerEntity) player).wandering_collector$getLostItemStorage().add(item.getStack());
-			}
+		if (theFormerOwner instanceof IServerPlayerEntity) {
+            ((IServerPlayerEntity) theFormerOwner).wandering_collector$getLostItemStorage().add(item.getStack());
 		}
 	}
 }
